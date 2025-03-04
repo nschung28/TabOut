@@ -1,0 +1,8 @@
+# Unity-related files to ignore
+TabOut/Library/
+TabOut/Logs/
+TabOut/Temp/
+*.csproj
+*.unityproj
+*.sln
+*.userprefs
