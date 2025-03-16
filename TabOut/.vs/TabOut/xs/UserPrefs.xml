@@ -1,0 +1,30 @@
+﻿<Properties StartupConfiguration="{E4723788-5B56-BAE6-B5C5-1EA1D940A6A1}|">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/TAMovement.cs">
+    <Files>
+      <File FileName="../../../../../Downloads/BlinnPhong.cginc" Line="12" Column="2" />
+      <File FileName="Assets/Blink/Art/Characters/LowPoly/Editor/MaterialTilingOffset.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scenes/Professor.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/TAMovement.cs" Line="1" Column="1" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="TabOut" expanded="True">
+            <Node name="Assets" expanded="True">
+              <Node name="Scripts" expanded="True">
+                <Node name="TAMovement.cs" selected="True" />
+              </Node>
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="1fc4eddd-00bb-4fd5-a61f-b937b68ec3a4" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+</Properties>
