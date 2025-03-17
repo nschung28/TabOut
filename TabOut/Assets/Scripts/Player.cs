@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    private bool isDistracted;
+    public bool isDistracted;
     // Start is called before the first frame update
     void Start()
     {
@@ -21,4 +21,5 @@ public class Player : MonoBehaviour
     {
         return isDistracted;
     }
+
 }
