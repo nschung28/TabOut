@@ -222,11 +222,9 @@ public class KeyGameManager : MonoBehaviour
         progressText.text = "";
     }
 
-    
+        
     public void OnTabIn()
     {
-        gameLevel = 1;
-        successCounter = 0;
         curKeys = GenerateTargetKeys(gameLevel);
         UpdateTargetKeys(curKeys);
         UpdateLevelUI();
