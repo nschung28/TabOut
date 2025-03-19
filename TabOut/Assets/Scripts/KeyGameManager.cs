@@ -31,8 +31,9 @@ public class KeyGameManager : MonoBehaviour
     Color black = new Color(0f,0f,0f);
     Color yellow = new Color(1f, 0.92f, 0.016f);
     
-    string outOfTimeMessage = "You have ran out of time to enter the keys, BOOM BOOM BOOM BOOM BOOM";
+    string outOfTimeMessage = "OUT OF TIME";
     string incorrectInputMessage = "INCORRECT INPUT!";
+    string gameOverMessage = "GAME OVER!";
     string levelUpMessage = "LEVEL UP!";
     
     // Time to wait after incorrect input before showing new keys
@@ -40,6 +41,8 @@ public class KeyGameManager : MonoBehaviour
     
     // Flag to prevent multiple incorrect handlers from running simultaneously
     private bool isHandlingIncorrectInput = false;
+
+    [SerializeField]private GameObject gameOver;
 
     void Start()
     {
@@ -71,8 +74,9 @@ public class KeyGameManager : MonoBehaviour
         if(curTime == 0.0f)
         {
             curTime = System.DateTime.Now.Second;
+            prevTime = curTime;
         }
-        prevTime = curTime;
+    
         curTime = System.DateTime.Now.Second;
 
         dTime = curTime - prevTime;
@@ -142,6 +146,7 @@ public class KeyGameManager : MonoBehaviour
             UpdateTargetKeys(curKeys);
             DisplayNewKeys();
         }
+        prevTime = System.DateTime.Now.Second;
         
         // Update UI
         UpdateLevelUI();
@@ -196,11 +201,34 @@ public class KeyGameManager : MonoBehaviour
         // Prevent multiple incorrect handlers from running at once
         if (isHandlingIncorrectInput)
             return;
-            
         isHandlingIncorrectInput = true;
+
         
         // Start coroutine for incorrect input handling
         StartCoroutine(ShowIncorrectInputScreen());
+    }
+
+    public void HandleGameOver()
+    {
+        gameOver.SetActive(true);
+        textMeshPro.color = red;
+        textMeshPro.text = gameOverMessage;
+        Debug.Log("GAME OVER");
+        
+        // Play incorrect sound
+        if (incorrectSound != null)
+        {
+            audioSource.PlayOneShot(incorrectSound);
+        }
+        
+        // Reset success counter or reduce it
+        if (successCounter > 0)
+        {
+            successCounter--;
+        }
+        
+        // Update UI
+        UpdateLevelUI();
     }
     
     IEnumerator ShowIncorrectInputScreen()
@@ -243,6 +271,7 @@ public class KeyGameManager : MonoBehaviour
             return;
             
         isHandlingIncorrectInput = true;
+        gameOver.SetActive(true);
         
         // Start coroutine for out of time handling
         StartCoroutine(ShowOutOfTimeScreen());

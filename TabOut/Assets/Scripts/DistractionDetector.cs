@@ -47,6 +47,7 @@ public class DistractionDetector : MonoBehaviour
     private Professor professor;
     private GameObject playerObject;
     private Player player;
+    [SerializeField] private KeyGameManager keyGameManager;
 
 
 
@@ -54,8 +55,8 @@ public class DistractionDetector : MonoBehaviour
     void Start()
     {
         // Get the collider attached to this GameObject
-        detectorCollider = GetComponent<Collider>();
-        professor = GetComponentInParent<Professor>();
+        detectorCollider = GetComponent<SphereCollider>();
+        professor = GetComponent<Professor>();
         playerObject = GameObject.Find("Player");
         player = playerObject.GetComponent<Player>();
 
@@ -86,6 +87,7 @@ public class DistractionDetector : MonoBehaviour
         Debug.Log("Player detected by " + gameObject.name);
         // see if player is distracted
         bool isDistracted = player.getIsDistracted();
+        keyGameManager.HandleGameOver();
         // handle detection
         professor.HandleDetect(isDistracted);
     }
