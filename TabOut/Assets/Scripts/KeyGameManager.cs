@@ -21,13 +21,25 @@ public class KeyGameManager : MonoBehaviour
     [SerializeField] public TMP_Text levelText;  // New UI element to show current level
     [SerializeField] public TMP_Text progressText;  // New UI element to show progress to next level
     
+    // Sound related variables
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip correctSound;
+    [SerializeField] private AudioClip incorrectSound;
+    
     Color red = new Color(1f, 0f, 0f);
     Color green = new Color(0f, 1f, 0f);
     Color black = new Color(0f,0f,0f);
     Color yellow = new Color(1f, 0.92f, 0.016f);
     
     string outOfTimeMessage = "You have ran out of time to enter the keys, BOOM BOOM BOOM BOOM BOOM";
+    string incorrectInputMessage = "INCORRECT INPUT!";
     string levelUpMessage = "LEVEL UP!";
+    
+    // Time to wait after incorrect input before showing new keys
+    private float incorrectInputWaitTime = 5.0f;
+    
+    // Flag to prevent multiple incorrect handlers from running simultaneously
+    private bool isHandlingIncorrectInput = false;
 
     void Start()
     {
@@ -36,6 +48,16 @@ public class KeyGameManager : MonoBehaviour
         delay = 0.5f;
         gameLevel = 1;  // Starting with 3 keys
         successCounter = 0;
+        
+        // Make sure we have an AudioSource component
+        if (audioSource == null)
+        {
+            audioSource = GetComponent<AudioSource>();
+            if (audioSource == null)
+            {
+                audioSource = gameObject.AddComponent<AudioSource>();
+            }
+        }
         
         curKeys = GenerateTargetKeys(gameLevel);
         UpdateTargetKeys(curKeys);
@@ -55,7 +77,7 @@ public class KeyGameManager : MonoBehaviour
 
         dTime = curTime - prevTime;
 
-        if(dTime > timeLimit)
+        if(dTime > timeLimit && !isHandlingIncorrectInput)
         {
           HandleOutOfTime();   
         }
@@ -98,6 +120,12 @@ public class KeyGameManager : MonoBehaviour
     public void HandleGoodInput()
     {
         textMeshPro.color = green;
+        
+        // Play correct sound
+        if (correctSound != null)
+        {
+            audioSource.PlayOneShot(correctSound);
+        }
         
         // Increase success counter
         successCounter++;
@@ -146,8 +174,11 @@ public class KeyGameManager : MonoBehaviour
         textMeshPro.text = levelUpMessage;
         textMeshPro.color = yellow;
         
-        // Play level up sound or animation here
-        // audioSource.PlayOneShot(levelUpSound);
+        // Play level up sound
+        if (correctSound != null)
+        {
+            audioSource.PlayOneShot(correctSound);
+        }
         
         yield return new WaitForSeconds(1.5f);
         
@@ -162,8 +193,27 @@ public class KeyGameManager : MonoBehaviour
 
     public void HandleBadInput()
     {
+        // Prevent multiple incorrect handlers from running at once
+        if (isHandlingIncorrectInput)
+            return;
+            
+        isHandlingIncorrectInput = true;
+        
+        // Start coroutine for incorrect input handling
+        StartCoroutine(ShowIncorrectInputScreen());
+    }
+    
+    IEnumerator ShowIncorrectInputScreen()
+    {
         textMeshPro.color = red;
+        textMeshPro.text = incorrectInputMessage;
         Debug.Log("Bad Inputs");
+        
+        // Play incorrect sound
+        if (incorrectSound != null)
+        {
+            audioSource.PlayOneShot(incorrectSound);
+        }
         
         // Reset success counter or reduce it
         if (successCounter > 0)
@@ -174,20 +224,57 @@ public class KeyGameManager : MonoBehaviour
         // Update UI
         UpdateLevelUI();
         
-        // raise TA suspicion and play noise
-        // trigger animation?
+        // Wait for 5 seconds
+        yield return new WaitForSeconds(incorrectInputWaitTime);
+        
+        // Generate new set of keys at current level and display them
+        curKeys = GenerateTargetKeys(gameLevel);
+        UpdateTargetKeys(curKeys);
+        DisplayNewKeys();
+        
+        // Reset handling flag
+        isHandlingIncorrectInput = false;
     }
 
     void HandleOutOfTime()
     {
+        // Prevent multiple incorrect handlers from running at once
+        if (isHandlingIncorrectInput)
+            return;
+            
+        isHandlingIncorrectInput = true;
+        
+        // Start coroutine for out of time handling
+        StartCoroutine(ShowOutOfTimeScreen());
+    }
+    
+    IEnumerator ShowOutOfTimeScreen()
+    {
         textMeshPro.text = outOfTimeMessage;
         textMeshPro.color = red;
+        
+        // Play incorrect sound
+        if (incorrectSound != null)
+        {
+            audioSource.PlayOneShot(incorrectSound);
+        }
         
         // Reset success counter
         successCounter = 0;
         
         // Update UI
         UpdateLevelUI();
+        
+        // Wait for 5 seconds
+        yield return new WaitForSeconds(incorrectInputWaitTime);
+        
+        // Generate new set of keys at current level and display them
+        curKeys = GenerateTargetKeys(gameLevel);
+        UpdateTargetKeys(curKeys);
+        DisplayNewKeys();
+        
+        // Reset handling flag
+        isHandlingIncorrectInput = false;
     }
     
     void UpdateLevelUI()
@@ -221,7 +308,6 @@ public class KeyGameManager : MonoBehaviour
         levelText.text = "";
         progressText.text = "";
     }
-
         
     public void OnTabIn()
     {
