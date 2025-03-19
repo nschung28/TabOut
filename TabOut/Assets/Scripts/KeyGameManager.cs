@@ -13,13 +13,16 @@ public class KeyGameManager : MonoBehaviour
     int gameLevel;
     int successCounter;  // Track consecutive successful inputs
     int requiredSuccessesToLevelUp = 3;  // How many successful inputs needed to level up
-    int maxLevel = 10;  // Maximum difficulty level
+    int maxLevel = 6;  // Maximum difficulty level
+    [SerializeField] private GameObject teachingAssistant;
     
     [SerializeField] public KeySequenceDetector inputManager;
     [SerializeField] private GameObject textObject;
     [SerializeField] public TMP_Text textMeshPro;
     [SerializeField] public TMP_Text levelText;  // New UI element to show current level
     [SerializeField] public TMP_Text progressText;  // New UI element to show progress to next level
+
+    private bool isOver;
     
     // Sound related variables
     [SerializeField] private AudioSource audioSource;
@@ -46,8 +49,9 @@ public class KeyGameManager : MonoBehaviour
 
     void Start()
     {
+        isOver = false;
         curTime = 0.0f;
-        timeLimit = 5.0f;
+        timeLimit = 7.0f;
         delay = 0.5f;
         gameLevel = 1;  // Starting with 3 keys
         successCounter = 0;
@@ -71,19 +75,22 @@ public class KeyGameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(curTime == 0.0f)
+        if (!isOver)
         {
+            if (curTime == 0.0f)
+            {
+                curTime = System.DateTime.Now.Second;
+                prevTime = curTime;
+            }
+
             curTime = System.DateTime.Now.Second;
-            prevTime = curTime;
-        }
-    
-        curTime = System.DateTime.Now.Second;
 
-        dTime = curTime - prevTime;
-
-        if(dTime > timeLimit && !isHandlingIncorrectInput)
-        {
-          HandleOutOfTime();   
+            dTime = curTime - prevTime;
+            
+            if (dTime > timeLimit && !isHandlingIncorrectInput)
+            {
+                HandleOutOfTime();
+            }
         }
     }
     
@@ -202,7 +209,7 @@ public class KeyGameManager : MonoBehaviour
         if (isHandlingIncorrectInput)
             return;
         isHandlingIncorrectInput = true;
-
+        
         
         // Start coroutine for incorrect input handling
         StartCoroutine(ShowIncorrectInputScreen());
@@ -211,6 +218,7 @@ public class KeyGameManager : MonoBehaviour
     public void HandleGameOver()
     {
         gameOver.SetActive(true);
+        teachingAssistant.SetActive(false);
         textMeshPro.color = red;
         textMeshPro.text = gameOverMessage;
         Debug.Log("GAME OVER");
@@ -227,8 +235,7 @@ public class KeyGameManager : MonoBehaviour
             successCounter--;
         }
         
-        // Update UI
-        UpdateLevelUI();
+        isOver = true;
     }
     
     IEnumerator ShowIncorrectInputScreen()
@@ -272,9 +279,13 @@ public class KeyGameManager : MonoBehaviour
             
         isHandlingIncorrectInput = true;
         gameOver.SetActive(true);
+        isOver = true;
+        teachingAssistant.SetActive(false);
         
         // Start coroutine for out of time handling
         StartCoroutine(ShowOutOfTimeScreen());
+        
+        
     }
     
     IEnumerator ShowOutOfTimeScreen()
@@ -333,6 +344,7 @@ public class KeyGameManager : MonoBehaviour
 
     public void OnTabOut()
     {
+        // prevTime = -10;
         textMeshPro.text = "";
         levelText.text = "";
         progressText.text = "";
@@ -340,6 +352,7 @@ public class KeyGameManager : MonoBehaviour
         
     public void OnTabIn()
     {
+        // prevTime = System.DateTime.Now.Second;
         curKeys = GenerateTargetKeys(gameLevel);
         UpdateTargetKeys(curKeys);
         UpdateLevelUI();
