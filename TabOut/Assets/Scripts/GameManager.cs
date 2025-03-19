@@ -12,6 +12,6 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log("Game Over! The professor caught you!");
         // Add other game-ending logic here
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name); // Reset the scene
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }

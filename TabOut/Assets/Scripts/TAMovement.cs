@@ -98,12 +98,6 @@ public class TAMovement : MonoBehaviour
             {
                 currentWaypoint = nextPossiblePoint;
             }
-            //Debug.Log("PREV:" + (previousWaypoint + 1));
-            //Debug.Log("CURR: " + (currentWaypoint + 1));
-            
-            
-            // natural pathing
-            // currentWaypoint = (currentWaypoint + 1) % waypoints.Length;
         }
     }
 }

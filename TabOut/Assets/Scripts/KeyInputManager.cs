@@ -3,13 +3,10 @@ using System.Collections.Generic;
 
 public class KeySequenceDetector : MonoBehaviour
 {
-    [Tooltip("The keys that need to be pressed simultaneously")]
     [SerializeField] public KeyCode[] requiredKeys;
     
-    [Tooltip("How long all keys must be held together (in seconds)")]
     [SerializeField] private float requiredHoldTime = 0.001f;
     
-    [Tooltip("Time window in which all keys must be pressed (in seconds)")]
     [SerializeField] private float timeWindow = 0.5f;
     [SerializeField] private KeyGameManager keyGameManager;
     [SerializeField] private Player player;

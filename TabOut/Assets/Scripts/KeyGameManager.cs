@@ -11,20 +11,19 @@ public class KeyGameManager : MonoBehaviour
     bool keysPressed;
     bool isSuccesful;
     int gameLevel;
-    int successCounter;  // Track consecutive successful inputs
-    int requiredSuccessesToLevelUp = 3;  // How many successful inputs needed to level up
-    int maxLevel = 6;  // Maximum difficulty level
+    int successCounter;
+    int requiredSuccessesToLevelUp = 3;
+    int maxLevel = 6;
     [SerializeField] private GameObject teachingAssistant;
     
     [SerializeField] public KeySequenceDetector inputManager;
     [SerializeField] private GameObject textObject;
     [SerializeField] public TMP_Text textMeshPro;
-    [SerializeField] public TMP_Text levelText;  // New UI element to show current level
-    [SerializeField] public TMP_Text progressText;  // New UI element to show progress to next level
+    [SerializeField] public TMP_Text levelText;
+    [SerializeField] public TMP_Text progressText;
 
     private bool isOver;
     
-    // Sound related variables
     [SerializeField] private AudioSource audioSource;
     [SerializeField] private AudioClip correctSound;
     [SerializeField] private AudioClip incorrectSound;
@@ -39,10 +38,7 @@ public class KeyGameManager : MonoBehaviour
     string gameOverMessage = "GAME OVER!";
     string levelUpMessage = "LEVEL UP!";
     
-    // Time to wait after incorrect input before showing new keys
     private float incorrectInputWaitTime = 5.0f;
-    
-    // Flag to prevent multiple incorrect handlers from running simultaneously
     private bool isHandlingIncorrectInput = false;
 
     [SerializeField]private GameObject gameOver;
@@ -53,10 +49,9 @@ public class KeyGameManager : MonoBehaviour
         curTime = 0.0f;
         timeLimit = 7.0f;
         delay = 0.5f;
-        gameLevel = 1;  // Starting with 3 keys
+        gameLevel = 1;
         successCounter = 0;
         
-        // Make sure we have an AudioSource component
         if (audioSource == null)
         {
             audioSource = GetComponent<AudioSource>();
@@ -72,7 +67,6 @@ public class KeyGameManager : MonoBehaviour
         UpdateLevelUI();
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (!isOver)
@@ -96,10 +90,9 @@ public class KeyGameManager : MonoBehaviour
     
     public KeyCode[] GenerateTargetKeys(int gameLevel)
     {
-        // Create an array with length based on gameLevel
         KeyCode[] targetKeys = new KeyCode[gameLevel];
         
-        // Create a list of all alphabetical key codes
+
         List<KeyCode> alphabetKeys = new List<KeyCode>();
         for (KeyCode key = KeyCode.A; key <= KeyCode.Z; key++)
         {
@@ -112,11 +105,7 @@ public class KeyGameManager : MonoBehaviour
         {
             // Pick a random index from the remaining alphabet keys
             int randomIndex = random.Next(0, alphabetKeys.Count);
-            
-            // Add the selected key to our target array
             targetKeys[i] = alphabetKeys[randomIndex];
-            
-            // Remove the key so it doesn't get chosen again
             alphabetKeys.RemoveAt(randomIndex);
         }
         return targetKeys;
@@ -170,12 +159,6 @@ public class KeyGameManager : MonoBehaviour
         // Display level up message
         StartCoroutine(ShowLevelUpMessage());
         
-        // Slightly decrease time limit each level to make it harder
-        if (timeLimit > 2.0f)  // Don't go below 2 seconds
-        {
-            timeLimit -= 0.3f;
-        }
-        
         // Generate new keys for new level
         curKeys = GenerateTargetKeys(gameLevel);
         UpdateTargetKeys(curKeys);
@@ -209,8 +192,7 @@ public class KeyGameManager : MonoBehaviour
         if (isHandlingIncorrectInput)
             return;
         isHandlingIncorrectInput = true;
-        
-        
+    
         // Start coroutine for incorrect input handling
         StartCoroutine(ShowIncorrectInputScreen());
     }
@@ -344,7 +326,6 @@ public class KeyGameManager : MonoBehaviour
 
     public void OnTabOut()
     {
-        // prevTime = -10;
         textMeshPro.text = "";
         levelText.text = "";
         progressText.text = "";
@@ -352,7 +333,6 @@ public class KeyGameManager : MonoBehaviour
         
     public void OnTabIn()
     {
-        // prevTime = System.DateTime.Now.Second;
         curKeys = GenerateTargetKeys(gameLevel);
         UpdateTargetKeys(curKeys);
         UpdateLevelUI();
